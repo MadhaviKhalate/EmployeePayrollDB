@@ -94,16 +94,92 @@ create table Employee_Details(
 emp_id int identity(1,1) primary key not null,
 name varchar(50) not null,
 gender varchar(2) not null,
-phone float not null,
+phone int not null,
 email varchar(50) not null)
 
 alter table Employee_Details add start_date date not null
 alter table Employee_Details add company_id int not null default(0)
 
-insert into Employee_Details values('Amit','M',9087654321,'sagarika@gmail.com','2018-10-11')
-insert into Employee_Details values('Madhavi','F',9807654321,'madhavi@gmail.com','2020-09-15')
-insert into Employee_Details values('Pooja','F',9123456780,'pooja@gmail.com','2021-04-20')
-insert into Employee_Details values('Vishal','M',8907651234,'vishal@gmail.com','2019-02-18')
+insert into Employee_Details values('Amit','M',9087654321,'amit@gmail.com','2018-10-11',1)
+insert into Employee_Details values('Madhavi','F',9807654321,'madhavi@gmail.com','2020-09-15',2)
+insert into Employee_Details values('Pooja','F',9123456780,'pooja@gmail.com','2021-04-20',3)
+insert into Employee_Details values('Vishal','M',8907651234,'vishal@gmail.com','2019-02-18',4)
 
 update Employee_Details set company_id = 101
 update Employee_Details set start_date = '2018-10-11' where name = 'Madhavi'
+
+select * from Employee_Details
+
+-----Creating department details table-----
+create table dept_details(
+dept_id int identity(11,1) primary key not null,
+dept_name varchar(25) not null)
+
+insert into dept_details values('Administration'),('Sales'),('Marketing'),('Production')
+
+------Creating Employee Address Table-------
+create table Emp_Address(
+name varchar(50) primary key not null,
+address varchar(25) not null,
+city varchar(25) not null,
+state varchar(25) not null,
+zip_code int not null)
+
+insert into Emp_Address values('Sagarika','15C','Pune','Maharashtra',400001)
+insert into Emp_Address values('Madhavi','11A','Baramati','Maharashtra',400001)
+insert into Emp_Address values('Pooja','12D','Solapur','Maharashtra',400001)
+insert into Emp_Address values('Pallavi','14C','Phaltan','Maharashtra',400001)
+
+-------Creating Employee Salary Table--------
+create table Emp_Salary(
+emp_id int identity(1,1) primary key not null,
+name varchar(50) not null,
+basic_pay float not null,
+deductions float not null,
+taxable_pay float not null,
+income_tax float not null,
+net_pay float not null )
+
+insert into Emp_Salary values('Sagarika',40000,1000,1000,2000,45000)
+insert into Emp_Salary values('Madhavi',50000,1000,1000,2000,25000)
+insert into Emp_Salary values('Pallavi',30000,1000,1000,2000,35000)
+insert into Emp_Salary values('Pooja',60000,1000,1000,2000,45000)
+
+------Creating Employee Department Table-------
+create table Emp_Department(
+emp_id int not null,
+emp_name varchar(25) not null,
+dept_id int not null,
+dept_name varchar(25) not null)
+
+insert into Emp_Department values(1,'Sagarika',12,'Sales'),(1,'Sagarika',13,'Marketing'),
+(2,'Madhavi',14,'Production'),(3,'Pallavi',14,'Production'),(4,'Pooja',11,'Administration')
+
+-------Adding Constraints To The Table------
+alter table Employee_Details add constraint fk_comp_id foreign key(company_id) references Companies(company_id)
+alter table Emp_Salary add constraint fk_emp_id foreign key(emp_id) references Employee_Details(emp_id)
+alter table Employee_Details add constraint fk_name foreign key(name) references Emp_Address(name)
+alter table Emp_Department add constraint fk_emp_dept_id foreign key(emp_id) references Employee_Details(emp_id)
+
+select gender,sum(basic_pay) as salary_sum from Employee_Details ed inner join Emp_Salary es on es.emp_id = ed.emp_id group by gender
+select gender,min(basic_pay) as min_salary from Employee_Details ed inner join Emp_Salary es on es.emp_id = ed.emp_id group by gender
+select gender,max(basic_pay) as max_salary from Employee_Details ed inner join Emp_Salary es on es.emp_id = ed.emp_id group by gender
+select gender,avg(basic_pay) as avg_salary from Employee_Details ed inner join Emp_Salary es on es.emp_id = ed.emp_id group by gender
+select gender,count(gender) as emp_count from Employee_Details ed inner join Emp_Salary es on es.emp_id = ed.emp_id group by gender
+
+----------------UC12--------------------
+select ed.emp_id,ed.name,gender,phone,start_date,basic_pay,deductions,taxable_pay,income_tax,net_pay from Employee_Details ed inner join
+Emp_Salary es on ed.emp_id = es.emp_id where start_date between '2018-10-11' and CURRENT_TIMESTAMP
+
+select ed.name,basic_pay from Employee_Details ed inner join Emp_Salary es on ed.emp_id = es.emp_id where ed.name = 'Pooja'
+
+select * from Companies
+select * from Employee_Details
+select * from Emp_Address
+select * from dept_details
+select * from Emp_Salary
+select * from Emp_Department
+
+select c.company_id,company_name,dd.dept_id,dd.dept_name,ed.emp_id,ea.name,gender,phone,email,start_date,address,city,state,zip_code,basic_pay,net_pay from 
+Companies c inner join Employee_Details ed on c.company_id = ed.company_id inner join Emp_Department empd on ed.emp_id = empd.emp_id inner join dept_details dd 
+on dd.dept_id = empd.dept_id inner join Emp_Address ea on ea.name inner join Emp_Salary es on es.emp_id = ed.emp_id
