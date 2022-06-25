@@ -79,3 +79,31 @@ insert into Employee_Payroll values('Sagar',15000,'2021-01-01','M',9876543210,'P
 update Employee_Payroll set name = 'Sagarika' where ID = 20
 update Employee_Payroll set department = 'Sales&Market' where name = 'Sagarika'
 insert into Employee_Payroll values('Sagarika',15000,'2021-01-01','F',9876543210,'Chennai','Marketing',15000,200,200,14600)
+
+
+-----Creating Companies Table-----
+create table Companies(
+company_id int identity(101,1) primary key not null,
+company_name varchar(25) not null)
+
+insert into Companies values('ABC')
+insert into Companies values('XYZ')
+
+-----Creating employee details table-----
+create table Employee_Details(
+emp_id int identity(1,1) primary key not null,
+name varchar(50) not null,
+gender varchar(2) not null,
+phone float not null,
+email varchar(50) not null)
+
+alter table Employee_Details add start_date date not null
+alter table Employee_Details add company_id int not null default(0)
+
+insert into Employee_Details values('Amit','M',9087654321,'sagarika@gmail.com','2018-10-11')
+insert into Employee_Details values('Madhavi','F',9807654321,'madhavi@gmail.com','2020-09-15')
+insert into Employee_Details values('Pooja','F',9123456780,'pooja@gmail.com','2021-04-20')
+insert into Employee_Details values('Vishal','M',8907651234,'vishal@gmail.com','2019-02-18')
+
+update Employee_Details set company_id = 101
+update Employee_Details set start_date = '2018-10-11' where name = 'Madhavi'
